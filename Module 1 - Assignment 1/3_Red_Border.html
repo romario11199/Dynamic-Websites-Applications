@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Red Border</title>
+</head>
+<body>
+
+<textarea>HTML & CSS gives us structure and style</textarea>
+<textarea>JavaScript brings our webpage to life!!</textarea>
+
+<p>jQuery</p>
+<p>JavaScript</p>
+
+<button id="button1">Click to check the effect</button>
+
+<script>
+document.getElementById("button1").onclick = function() {
+
+    let elements = document.querySelectorAll("textarea, p");
+
+    elements.forEach(function(element) {
+        element.style.border = "2px solid red";
+    });
+
+};
+</script>
+
+</body>
+</html>

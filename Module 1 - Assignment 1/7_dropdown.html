@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dropdown</title>
+</head>
+<body>
+
+<select id="course">
+    <option value="">Select Course</option>
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+    <option value="js">JavaScript</option>
+</select>
+
+<p id="message"></p>
+
+<script>
+
+document.getElementById("course").onchange = function() {
+
+    let message = "";
+
+    if (this.value === "html") {
+        message = "You selected HTML";
+    }
+    else if (this.value === "css") {
+        message = "You selected CSS";
+    }
+    else if (this.value === "js") {
+        message = "You selected JavaScript";
+    }
+
+    document.getElementById("message").innerHTML = message;
+};
+
+</script>
+
+</body>
+</html>

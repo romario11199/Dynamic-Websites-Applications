@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mouse Effect</title>
+</head>
+<body>
+
+<p>Move the mouse over this and next paragraph.</p>
+<p>Web development tutorials</p>
+
+<script>
+
+let paras = document.querySelectorAll("p");
+
+paras.forEach(function(p) {
+
+    p.addEventListener("mouseenter", function() {
+        this.style.fontWeight = "bold";
+        this.style.color = "blue";
+    });
+
+    p.addEventListener("mouseleave", function() {
+        this.style.fontWeight = "normal";
+        this.style.color = "black";
+    });
+
+});
+
+</script>
+
+</body>
+</html>

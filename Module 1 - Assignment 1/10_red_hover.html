@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hover Effect</title>
+</head>
+<body>
+
+<p>jQuery Exercises, Practice and Solution.</p>
+<p>Ajax Tutorial</p>
+
+<script>
+
+let paragraphs = document.querySelectorAll("p");
+
+paragraphs.forEach(function(p) {
+
+    p.addEventListener("mouseover", function() {
+        this.style.color = "red";
+    });
+
+    p.addEventListener("mouseout", function() {
+        this.style.color = "black";
+    });
+
+});
+
+</script>
+
+</body>
+</html>

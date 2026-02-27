@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Style Properties</title>
+
+<style>
+body { background-color: lightblue; }
+p { color: darkblue; }
+</style>
+
+</head>
+<body>
+
+<p>Click the button to display the style properties of this document.</p>
+
+<button onclick="myFunction()">Try it</button>
+
+<p id="demo"></p>
+
+<script>
+
+function myFunction() {
+
+    let styleContent = document.querySelector("style").innerHTML;
+
+    document.getElementById("demo").innerText = styleContent;
+
+}
+
+</script>
+
+</body>
+</html>

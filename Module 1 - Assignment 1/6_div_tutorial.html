@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Div Tutorial</title>
+</head>
+<body>
+
+<div class="tutorial">
+    <p>PHP</p>
+</div>
+
+<div>
+    <p>Java</p>
+</div>
+
+<div class="tutorial">
+    <p>Python</p>
+</div>
+
+<button id="btn1">Click to see the effect</button>
+
+<script>
+
+document.getElementById("btn1").onclick = function() {
+
+    let divs = document.querySelectorAll(".tutorial");
+
+    divs.forEach(function(div) {
+        div.style.backgroundColor = "yellow";
+    });
+
+};
+
+</script>
+
+</body>
+</html>
