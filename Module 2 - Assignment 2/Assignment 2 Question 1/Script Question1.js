@@ -16,9 +16,9 @@ function clearLog() {
 
 async function fetchEmployees() {
     try {
-        addToLog('Fetching employee data from Employees Question1.json...');
+        addToLog('Fetching employee data from employees.json...');
         
-        const response = await fetch('Employees Question1.json');
+        const response = await fetch('employees.json');
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -49,7 +49,7 @@ function performArrayOperations(employees) {
     
     const fullNames = employees.map(({ firstName, lastName }) => `${firstName} ${lastName}`);
     addToLog('Full Names (map with destructuring):');
-    fullNames.forEach(name => addToLog(`   - ${name}`));
+    fullNames.forEach(name => addToLog(`   • ${name}`));
     console.log('Full Names:', fullNames);
 
     const totalSalary = employees.reduce((acc, { salary }) => acc + salary, 0);
@@ -63,14 +63,14 @@ function performArrayOperations(employees) {
     const highEarners = employees.filter(({ salary }) => salary > 55000);
     addToLog('High Earners (>$55,000) (filter):');
     highEarners.forEach(({ firstName, lastName, salary }) => 
-        addToLog(`   - ${firstName} ${lastName}: $${salary.toLocaleString()}`)
+        addToLog(`   • ${firstName} ${lastName}: $${salary.toLocaleString()}`)
     );
     console.log('High Earners (>$55,000):', highEarners);
 
     const sortedByAge = [...employees].sort((a, b) => a.age - b.age);
     addToLog('Employees sorted by age (ascending):');
     sortedByAge.forEach(({ firstName, lastName, age }) => 
-        addToLog(`   - ${firstName} ${lastName}: ${age} years old`)
+        addToLog(`   • ${firstName} ${lastName}: ${age} years old`)
     );
     console.log('Sorted by Age:', sortedByAge);
 
@@ -81,11 +81,6 @@ function displaySortedEmployees(employees) {
     const sortedEmployees = [...employees].sort((a, b) => a.age - b.age);
     
     const demoDiv = document.getElementById('demo');
-
-    if (sortedEmployees.length === 0) {
-        demoDiv.innerHTML = '<h3>Employee Roster (Sorted by Age)</h3><p>No employees found.</p>';
-        return;
-    }
     
     const ul = document.createElement('ul');
     ul.className = 'employee-list';
@@ -120,7 +115,7 @@ function saveToLocalStorage() {
         addToLog('Saved sorted employees to localStorage');
         alert('Data saved to localStorage successfully!');
     } catch (error) {
-        addToLog(`Error saving to localStorage: ${error.message}`);
+        addToLog(`❌ Error saving to localStorage: ${error.message}`);
         alert('Error saving to localStorage');
     }
 }
@@ -131,13 +126,12 @@ function getFromLocalStorage() {
         
         if (storedData) {
             const employees = JSON.parse(storedData);
-            employeesData = employees;
             addToLog(`Retrieved from localStorage: ${employees.length} employees`);
             
-            displaySortedEmployees(employeesData);
+            displaySortedEmployees(employees);
             
             employees.forEach(({ firstName, lastName, age, salary }) => {
-                addToLog(`   - ${firstName} ${lastName}: Age ${age}, $${salary}`);
+                addToLog(`   • ${firstName} ${lastName}: Age ${age}, $${salary}`);
             });
             
             alert('Data retrieved from localStorage successfully!');
@@ -176,4 +170,35 @@ function clearLocalStorage() {
 document.addEventListener('DOMContentLoaded', () => {
     clearLog();
     fetchEmployees();
+});
+
+
+function setupSearchFeature() {
+    const searchBar = document.getElementById('searchBar');
+    
+    searchBar.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        if (searchTerm === '') {
+            displaySortedEmployees(employeesData);
+            addToLog('Search cleared - showing all employees');
+        } else {
+            const filteredEmployees = employeesData.filter(({ firstName, lastName }) => {
+                const fullName = `${firstName} ${lastName}`.toLowerCase();
+                return fullName.includes(searchTerm);
+            });
+            
+            displaySortedEmployees(filteredEmployees);
+            addToLog(`Found ${filteredEmployees.length} employees matching "${searchTerm}"`);
+        }
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    clearLog();
+    fetchEmployees();
+    if (document.getElementById('searchBar')) {
+        setupSearchFeature();
+    }
 });
