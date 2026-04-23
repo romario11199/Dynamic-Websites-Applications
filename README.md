@@ -9,12 +9,12 @@ This repository contains a complete implementation of the Service Dashboard assi
 ### Part 1: API Integration & Canvas Application (60 Marks)
 
 #### ✅ Requirement 1: Geospatial Intelligence (20 Marks)
-- **Provider**: Mapbox (Geocoding API)
+- **Provider**: Google Maps (Geocoding API)
 - **Features**:
-  - Interactive map component using Mapbox GL JS
+  - Interactive map component using Google Maps JavaScript API
   - "Search Location" input field
   - Uses `fetch()` to convert address strings to latitude/longitude coordinates
-  - Map flies to coordinates and drops custom red marker
+  - Map centers on coordinates and drops custom marker
   - Error handling for invalid locations and missing API keys
 
 #### ✅ Requirement 2: Real-Time News Stream (20 Marks)
@@ -74,14 +74,14 @@ Service Dashboard/
 1. **API Keys**: Open `ServiceDashboard/wwwroot/config.js` and replace placeholder values:
    ```javascript
    export const API_KEYS = {
-     MAPBOX: "your_mapbox_api_key_here",
+     GOOGLE_MAPS: "your_google_maps_api_key_here",
      NYT: "your_nytimes_api_key_here",
      YOUTUBE: "your_youtube_api_key_here"
    };
    ```
 
 2. **Get API Keys**:
-   - **Mapbox**: [mapbox.com](https://account.mapbox.com/) - Free tier available
+   - **Google Maps**: [Google Cloud Console](https://console.cloud.google.com/google/maps-apis) - Free tier available
    - **NYTimes**: [developer.nytimes.com](https://developer.nytimes.com/get-started) - Free tier available
    - **YouTube**: [Google Cloud Console](https://console.cloud.google.com/) - Free tier available
 
@@ -115,7 +115,7 @@ Every function includes comprehensive JSDoc documentation:
 Example:
 ```javascript
 /**
- * @description Fetches latitude and longitude for a location string using Mapbox Geocoding API.
+ * @description Fetches latitude and longitude for a location string using Google Maps Geocoding API.
  * @param {string} location - The address or place name to geocode
  * @returns {Promise<{lng:number,lat:number}|null>} - Coordinates or null if not found
  */
@@ -136,7 +136,7 @@ The application includes:
 - All API calls are client-side using the Fetch API
 - Canvas clock uses mathematical trigonometry for accurate hand positioning
 - Responsive design works on desktop and mobile devices
-- No external dependencies except Mapbox GL JS (loaded via CDN)
+- No external dependencies except Google Maps JavaScript API (loaded via CDN)
 
 ## 🎓 Academic Compliance
 

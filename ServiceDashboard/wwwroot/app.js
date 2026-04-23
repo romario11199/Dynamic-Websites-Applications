@@ -43,20 +43,20 @@ videoInput.addEventListener('keypress', (e) => {
 });
 
 /**
- * @description Initializes the Mapbox GL map instance and sets default view.
+ * @description Initializes the Google Maps instance and sets default view.
  * @returns {void}
  */
 function initializeMap() {
-  if (!API_KEYS.MAPBOX || API_KEYS.MAPBOX === "YOUR_MAPBOX_API_KEY_HERE") {
-    console.warn('Mapbox API key is missing or not configured in config.js');
+  if (!API_KEYS.GOOGLE_MAPS || API_KEYS.GOOGLE_MAPS === "YOUR GOOGLE MAPS API KEY HERE") {
+    console.warn('Google Maps API key is missing or not configured in config.js');
     const mapContainer = document.getElementById('map');
     mapContainer.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f8fafc; border-radius: 18px; color: #666; text-align: center; padding: 1rem;">
         <div>
           <div style="font-size: 2rem; margin-bottom: 0.5rem;">🗺️</div>
           <p><strong>Map Unavailable</strong></p>
-          <p>Add your Mapbox API key to config.js to enable the interactive map.</p>
-          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Get a free key at <a href="https://mapbox.com" target="_blank">mapbox.com</a></p>
+          <p>Add your Google Maps API key to config.js to enable the interactive map.</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Get a key at <a href="https://console.cloud.google.com/google/maps-apis" target="_blank">Google Cloud Console</a></p>
         </div>
       </div>
     `;
@@ -64,17 +64,22 @@ function initializeMap() {
   }
 
   try {
-    mapboxgl.accessToken = API_KEYS.MAPBOX;
-    map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [-77.2975, 18.3475],
-      zoom: 3
-    });
-    console.log('Map initialized successfully');
+    // Initialize Google Map
+    const mapOptions = {
+      center: { lat: 18.3475, lng: -77.2975 }, // Kingston, Jamaica coordinates
+      zoom: 3,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    // Initialize Places service for geocoding
+    const service = new google.maps.places.PlacesService(map);
+
+    console.log('Google Maps initialized successfully');
   } catch (error) {
-    console.error('Failed to initialize map:', error);
-    document.getElementById('map').innerHTML = '<p style="padding: 1rem; color: #666;">Failed to load map. Check your API key.</p>';
+    console.error('Failed to initialize Google Maps:', error);
+    document.getElementById('map').innerHTML = '<p style="padding: 1rem; color: #666;">Failed to load map. Check your API key and internet connection.</p>';
   }
 }
 
@@ -99,25 +104,27 @@ async function handleLocationSearch() {
 }
 
 /**
- * @description Fetches latitude and longitude for a location string using Mapbox Geocoding API.
+ * @description Fetches latitude and longitude for a location string using Google Maps Geocoding API.
  * @param {string} location
  * @returns {Promise<{lng:number,lat:number}|null>}
  */
 async function fetchCoordinates(location) {
-  if (!API_KEYS.MAPBOX || API_KEYS.MAPBOX === "YOUR_MAPBOX_API_KEY_HERE") {
-    alert('Mapbox API key not configured. Please add your key to config.js');
+  if (!API_KEYS.GOOGLE_MAPS || API_KEYS.GOOGLE_MAPS === "YOUR GOOGLE MAPS API KEY HERE") {
+    alert('Google Maps API key not configured. Please add your key to config.js');
     return null;
   }
-  
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${API_KEYS.MAPBOX}`;
+
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${API_KEYS.GOOGLE_MAPS}`;
   try {
     const response = await fetch(url);
     const data = await response.json();
-    const feature = data.features?.[0];
-    if (!feature) {
+
+    if (data.status !== 'OK' || !data.results || data.results.length === 0) {
       return null;
     }
-    return { lng: feature.center[0], lat: feature.center[1] };
+
+    const location = data.results[0].geometry.location;
+    return { lng: location.lng, lat: location.lat };
   } catch (error) {
     console.error('Geocoding error', error);
     return null;
@@ -130,15 +137,21 @@ async function fetchCoordinates(location) {
  * @returns {void}
  */
 function flyToLocation(coordinates) {
-  map.flyTo({ center: [coordinates.lng, coordinates.lat], zoom: 12, speed: 1.2 });
+  // Move map to new location
+  map.setCenter({ lat: coordinates.lat, lng: coordinates.lng });
+  map.setZoom(12);
 
+  // Remove existing marker if it exists
   if (marker) {
-    marker.remove();
+    marker.setMap(null);
   }
 
-  marker = new mapboxgl.Marker({ color: '#ef4444' })
-    .setLngLat([coordinates.lng, coordinates.lat])
-    .addTo(map);
+  // Create new marker
+  marker = new google.maps.Marker({
+    position: { lat: coordinates.lat, lng: coordinates.lng },
+    map: map,
+    title: 'Searched Location'
+  });
 }
 
 /**
@@ -317,7 +330,7 @@ async function handleNewsSearch() {
  * @returns {Promise<Array<{headline:string,leadParagraph:string,url:string}>>}
  */
 async function fetchNewsArticles(query) {
-  if (!API_KEYS.NYT || API_KEYS.NYT === "YOUR_NYTIMES_API_KEY_HERE") {
+  if (!API_KEYS.NYT || API_KEYS.NYT === "YOUR NYTIMES API KEY HERE") {
     alert('NYTimes API key not configured. Please add your key to config.js');
     return [];
   }
@@ -380,16 +393,16 @@ async function handleVideoSearch() {
 }
 
 /**
- *if (!API_KEYS.YOUTUBE || API_KEYS.YOUTUBE === "YOUR_YOUTUBE_API_KEY_HERE") {
+ * @description Fetches the top YouTube videos for a search query using YouTube Data API v3.
+ * @param {string} query - The search topic for YouTube videos
+ * @returns {Promise<Array<{id:string,title:string,thumbnail:string}>>} Array of video objects with metadata
+ */
+async function fetchYouTubeVideos(query) {
+  if (!API_KEYS.YOUTUBE || API_KEYS.YOUTUBE === "YOUR YOUTUBE API KEY HERE") {
     alert('YouTube API key not configured. Please add your key to config.js');
     return [];
   }
-  
-   @description Fetches the top YouTube videos for a search query.
- * @param {string} query
- * @returns {Promise<Array<{id:string,title:string,thumbnail:string}>>}
- */
-async function fetchYouTubeVideos(query) {
+
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(query)}&key=${API_KEYS.YOUTUBE}`;
   try {
     const response = await fetch(url);
