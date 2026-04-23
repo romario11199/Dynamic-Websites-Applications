@@ -325,24 +325,29 @@ async function handleNewsSearch() {
 }
 
 /**
- * @description Fetches news articles from the NYTimes Article Search API.
+ * @description Fetches news articles from the NewsData.io API.
  * @param {string} query
  * @returns {Promise<Array<{headline:string,leadParagraph:string,url:string}>>}
  */
 async function fetchNewsArticles(query) {
-  if (!API_KEYS.NYT || API_KEYS.NYT === "YOUR NYTIMES API KEY HERE") {
-    alert('NYTimes API key not configured. Please add your key to config.js');
+  if (!API_KEYS.NEWSDATA || API_KEYS.NEWSDATA === "YOUR NEWSDATA API KEY HERE") {
+    alert('NewsData API key not configured. Please add your key to config.js');
     return [];
   }
-  
-  const url = `https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${encodeURIComponent(query)}&api-key=${API_KEYS.NYT}`;
+
+  const url = `https://newsdata.io/api/1/news?apikey=${API_KEYS.NEWSDATA}&q=${encodeURIComponent(query)}&language=en&size=8`;
   try {
     const response = await fetch(url);
     const data = await response.json();
-    return data.response.docs.slice(0, 8).map((doc) => ({
-      headline: doc.headline?.main ?? 'Untitled',
-      leadParagraph: doc.lead_paragraph ?? doc.abstract ?? 'No summary available.',
-      url: doc.web_url
+
+    if (!data.results || data.results.length === 0) {
+      return [];
+    }
+
+    return data.results.slice(0, 8).map((article) => ({
+      headline: article.title ?? 'Untitled',
+      leadParagraph: article.description ?? article.content?.substring(0, 200) + '...' ?? 'No summary available.',
+      url: article.link
     }));
   } catch (error) {
     console.error('News fetch error', error);
@@ -351,7 +356,7 @@ async function fetchNewsArticles(query) {
 }
 
 /**
- * @description Renders NYTimes article cards inside the news section.
+ * @description Renders NewsData article cards inside the news section.
  * @param {Array<{headline:string,leadParagraph:string,url:string}>} articles
  * @returns {void}
  */

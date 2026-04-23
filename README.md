@@ -18,7 +18,7 @@ This repository contains a complete implementation of the Service Dashboard assi
   - Error handling for invalid locations and missing API keys
 
 #### ✅ Requirement 2: Real-Time News Stream (20 Marks)
-- **Provider**: NYTimes Article Search API
+- **Provider**: NewsData.io API
 - **Features**:
   - Searchable news feed with input field
   - Results displayed in responsive grid layout
@@ -75,14 +75,14 @@ Service Dashboard/
    ```javascript
    export const API_KEYS = {
      GOOGLE_MAPS: "your_google_maps_api_key_here",
-     NYT: "your_nytimes_api_key_here",
+     NEWSDATA: "your_newsdata_api_key_here",
      YOUTUBE: "your_youtube_api_key_here"
    };
    ```
 
 2. **Get API Keys**:
    - **Google Maps**: [Google Cloud Console](https://console.cloud.google.com/google/maps-apis) - Free tier available
-   - **NYTimes**: [developer.nytimes.com](https://developer.nytimes.com/get-started) - Free tier available
+   - **NewsData**: [newsdata.io](https://newsdata.io/register) - Free tier available
    - **YouTube**: [Google Cloud Console](https://console.cloud.google.com/) - Free tier available
 
 ### Running the Application
