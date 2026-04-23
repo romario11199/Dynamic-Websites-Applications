@@ -23,7 +23,14 @@ let map;
 let marker;
 let isNightMode = false;
 
-initializeMap();
+// Wait for Google Maps API to load before initializing
+if (document.readyState === 'loading') {
+  window.addEventListener('load', () => {
+    setTimeout(initializeMap, 200);
+  });
+} else {
+  setTimeout(initializeMap, 200);
+}
 startClock();
 
 locationSearch.addEventListener('click', handleLocationSearch);
@@ -64,6 +71,13 @@ function initializeMap() {
   }
 
   try {
+    // Check if Google Maps API is available
+    if (typeof google === 'undefined' || !google.maps) {
+      console.error('Google Maps API not loaded. Will retry.');
+      setTimeout(initializeMap, 500);
+      return;
+    }
+
     // Initialize Google Map
     const mapOptions = {
       center: { lat: 18.3475, lng: -77.2975 }, // Kingston, Jamaica coordinates
@@ -72,10 +86,6 @@ function initializeMap() {
     };
 
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-    // Initialize Places service for geocoding
-    const service = new google.maps.places.PlacesService(map);
-
     console.log('Google Maps initialized successfully');
   } catch (error) {
     console.error('Failed to initialize Google Maps:', error);
@@ -116,17 +126,27 @@ async function fetchCoordinates(location) {
 
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${API_KEYS.GOOGLE_MAPS}`;
   try {
+    console.log(`Fetching coordinates for: ${location}`);
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.status !== 'OK' || !data.results || data.results.length === 0) {
+    console.log(`Geocoding status: ${data.status}`);
+    
+    if (data.status !== 'OK') {
+      console.error(`Geocoding error: ${data.status}`, data.error_message || '');
+      return null;
+    }
+    
+    if (!data.results || data.results.length === 0) {
+      console.warn('No results found for the location');
       return null;
     }
 
-    const location = data.results[0].geometry.location;
-    return { lng: location.lng, lat: location.lat };
+    const coords = data.results[0].geometry.location;
+    console.log(`Found coordinates: lat=${coords.lat}, lng=${coords.lng}`);
+    return { lng: coords.lng, lat: coords.lat };
   } catch (error) {
-    console.error('Geocoding error', error);
+    console.error('Geocoding error:', error);
     return null;
   }
 }
