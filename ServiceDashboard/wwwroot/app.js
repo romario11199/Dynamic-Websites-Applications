@@ -152,26 +152,49 @@ async function fetchCoordinates(location) {
 }
 
 /**
- * @description Moves the map to coordinates and drops a custom marker.
+ * @description Moves the map to coordinates with smooth animation and drops a custom marker.
  * @param {{lng:number,lat:number}} coordinates
  * @returns {void}
  */
 function flyToLocation(coordinates) {
-  // Move map to new location
-  map.setCenter({ lat: coordinates.lat, lng: coordinates.lng });
-  map.setZoom(12);
+  // Animate map zoom out, then pan, then zoom in for "fly" effect
+  const currentZoom = map.getZoom();
+  
+  // Zoom out for fly effect
+  map.setZoom(8);
+  
+  // Smooth pan to location with animation
+  setTimeout(() => {
+    map.panTo({ lat: coordinates.lat, lng: coordinates.lng });
+  }, 200);
+  
+  // Zoom in to final level
+  setTimeout(() => {
+    map.setZoom(14);
+  }, 600);
 
   // Remove existing marker if it exists
   if (marker) {
     marker.setMap(null);
   }
 
-  // Create new marker
+  // Create new custom marker with animation
   marker = new google.maps.Marker({
     position: { lat: coordinates.lat, lng: coordinates.lng },
     map: map,
-    title: 'Searched Location'
+    title: 'Searched Location',
+    animation: google.maps.Animation.DROP,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 8,
+      fillColor: '#ef4444',
+      fillOpacity: 1,
+      strokeColor: '#ffffff',
+      strokeWeight: 3
+    }
   });
+
+  console.log(`Marker placed at: lat=${coordinates.lat}, lng=${coordinates.lng}`);
 }
 
 /**
