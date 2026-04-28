@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Service Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAPCmoXJpjXaGzE_UlgkP0J9Fg3-P2pxU&libraries=places"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>Service Dashboard</h1>
+    <p>Unified API dashboard with map search, news feed, video search, and a real-time canvas clock.</p>
+  </header>
+
+  <main class="dashboard-grid">
+    <section class="card" id="map-section">
+      <h2>Geospatial Intelligence</h2>
+      <div class="form-row">
+        <input id="location-input" type="search" placeholder="Search Location (e.g. Seven Mile Beach, Negril)" />
+        <button id="location-search">Search</button>
+      </div>
+      <div id="map" class="map-container"></div>
+      <p class="note">Uses Google Maps Geocoding API for the interactive map.</p>
+    </section>
+
+    <section class="card" id="news-section">
+      <h2>Real-Time News Stream</h2>
+      <div class="form-row">
+        <input id="news-input" type="search" placeholder="Search Real-Time News" />
+        <button id="news-search">Search</button>
+      </div>
+      <div id="news-spinner" class="spinner hidden"></div>
+      <div id="news-grid" class="results-grid"></div>
+    </section>
+
+    <section class="card" id="video-section">
+      <h2>On-Demand Media Player</h2>
+      <div class="form-row">
+        <input id="video-input" type="search" placeholder="Search YouTube Videos" />
+        <button id="video-search">Search</button>
+      </div>
+      <div id="video-player" class="video-player">
+        <iframe id="video-frame" src="https://www.youtube.com/embed/?rel=0" title="YouTube video player" allowfullscreen></iframe>
+      </div>
+      <div id="video-thumbnails" class="video-thumbnails"></div>
+    </section>
+
+    <section class="card" id="clock-section">
+      <h2>State-Sync Analog Clock</h2>
+      <div class="clock-controls">
+        <button id="mode-toggle">Switch to Night Mode</button>
+      </div>
+      <canvas id="clock-canvas"></canvas>
+      <div id="digital-clock" style="text-align: center; margin-top: 1rem; font-size: 1.2rem; font-weight: bold;"></div>
+      <p class="note">The clock uses requestAnimationFrame and trigonometry to render continuously.</p>
+    </section>
+  </main>
+
+  <!--- <script src="https://api.mapbox.com/mapbox-gl-js/v2.19.0/mapbox-gl.js"></script> -->
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
