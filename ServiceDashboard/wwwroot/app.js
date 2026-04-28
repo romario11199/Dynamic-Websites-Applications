@@ -51,7 +51,8 @@ videoInput.addEventListener('keypress', (e) => {
 
 /**
  * @description Initializes the Google Maps instance and sets default view.
- * @returns {void}
+ * @param {void} none - This function does not take any input arguments.
+ * @returns {void} Does not return a value.
  */
 function initializeMap() {
   if (!API_KEYS.GOOGLE_MAPS || API_KEYS.GOOGLE_MAPS === "YOUR GOOGLE MAPS API KEY HERE") {
@@ -95,9 +96,15 @@ function initializeMap() {
 
 /**
  * @description Handles the input event for location search, fetches coordinates, and updates the map.
- * @returns {Promise<void>}
+ * @param {void} none - This function reads the current value from the location input field.
+ * @returns {Promise<void>} Resolves after handling validation, geocoding, and map update steps.
  */
 async function handleLocationSearch() {
+  if (!map) {
+    alert('Map is still loading. Please wait a moment and try again.');
+    return;
+  }
+
   const query = locationInput.value.trim();
   if (!query) {
     alert('Please enter a location to search.');
@@ -114,51 +121,43 @@ async function handleLocationSearch() {
 }
 
 /**
- * @description Fetches latitude and longitude for a location string using Google Maps Geocoding API.
- * @param {string} location
- * @returns {Promise<{lng:number,lat:number}|null>}
+ * @description Fetches latitude and longitude for a location string using Google Maps JavaScript Geocoder.
+ * @param {string} location - The place name or address to geocode.
+ * @returns {Promise<{lng:number,lat:number}|null>} A coordinate object when found, otherwise null.
  */
 async function fetchCoordinates(location) {
-  if (!API_KEYS.GOOGLE_MAPS || API_KEYS.GOOGLE_MAPS === "YOUR GOOGLE MAPS API KEY HERE") {
-    alert('Google Maps API key not configured. Please add your key to config.js');
+  if (!map || typeof google === 'undefined') {
+    console.error('Google Maps not ready');
     return null;
   }
 
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${API_KEYS.GOOGLE_MAPS}`;
-  try {
-    console.log(`Fetching coordinates for: ${location}`);
-    const response = await fetch(url);
-    const data = await response.json();
-
-    console.log(`Geocoding status: ${data.status}`);
+  return new Promise((resolve) => {
+    const geocoder = new google.maps.Geocoder();
     
-    if (data.status !== 'OK') {
-      console.error(`Geocoding error: ${data.status}`, data.error_message || '');
-      return null;
-    }
-    
-    if (!data.results || data.results.length === 0) {
-      console.warn('No results found for the location');
-      return null;
-    }
-
-    const coords = data.results[0].geometry.location;
-    console.log(`Found coordinates: lat=${coords.lat}, lng=${coords.lng}`);
-    return { lng: coords.lng, lat: coords.lat };
-  } catch (error) {
-    console.error('Geocoding error:', error);
-    return null;
-  }
+    console.log(`Geocoding location: ${location}`);
+    geocoder.geocode({ address: location }, (results, status) => {
+      console.log(`Geocoding status: ${status}`);
+      
+      if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+        const result = results[0];
+        const coords = result.geometry.location;
+        console.log(`Found coordinates: lat=${coords.lat()}, lng=${coords.lng()}`);
+        resolve({ lat: coords.lat(), lng: coords.lng() });
+      } else {
+        console.error(`Geocoding failed: ${status}`);
+        resolve(null);
+      }
+    });
+  });
 }
 
 /**
  * @description Moves the map to coordinates with smooth animation and drops a custom marker.
- * @param {{lng:number,lat:number}} coordinates
- * @returns {void}
+ * @param {{lng:number,lat:number}} coordinates - The latitude and longitude to center and mark on the map.
+ * @returns {void} Does not return a value.
  */
 function flyToLocation(coordinates) {
   // Animate map zoom out, then pan, then zoom in for "fly" effect
-  const currentZoom = map.getZoom();
   
   // Zoom out for fly effect
   map.setZoom(8);
@@ -199,7 +198,8 @@ function flyToLocation(coordinates) {
 
 /**
  * @description Starts the analog clock animation using requestAnimationFrame.
- * @returns {void}
+ * @param {void} none - This function does not take any input arguments.
+ * @returns {void} Does not return a value.
  */
 function startClock() {
   if (!clockContext) {
@@ -216,8 +216,8 @@ function startClock() {
 
 /**
  * @description Draws the analog clock on canvas for the current time.
- * @param {number} timestamp
- * @returns {void}
+ * @param {number} timestamp - Frame timestamp provided by requestAnimationFrame.
+ * @returns {void} Does not return a value.
  */
 function drawClock(timestamp) {
   const radius = clockCanvas.width / 2;
@@ -242,9 +242,9 @@ function drawClock(timestamp) {
 
 /**
  * @description Draws the clock face background and tick marks.
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} radius
- * @returns {void}
+ * @param {CanvasRenderingContext2D} ctx - The 2D canvas drawing context.
+ * @param {number} radius - The base radius of the clock face.
+ * @returns {void} Does not return a value.
  */
 function drawFace(ctx, radius) {
   const fillStyle = isNightMode ? '#020617' : '#f8fafc';
@@ -266,9 +266,9 @@ function drawFace(ctx, radius) {
 
 /**
  * @description Draws numeric markers around the clock face.
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} radius
- * @returns {void}
+ * @param {CanvasRenderingContext2D} ctx - The 2D canvas drawing context.
+ * @param {number} radius - The base radius used to position numbers.
+ * @returns {void} Does not return a value.
  */
 function drawNumbers(ctx, radius) {
   ctx.font = `${radius * 0.12}px system-ui`;
@@ -290,10 +290,10 @@ function drawNumbers(ctx, radius) {
 
 /**
  * @description Draws the hour, minute, and second hands on the clock.
- * @param {CanvasRenderingContext2D} ctx
- * @param {Date} time
- * @param {number} radius
- * @returns {void}
+ * @param {CanvasRenderingContext2D} ctx - The 2D canvas drawing context.
+ * @param {Date} time - The current date/time used to calculate hand angles.
+ * @param {number} radius - The base radius used to size hand lengths.
+ * @returns {void} Does not return a value.
  */
 function drawHands(ctx, time, radius) {
   const hour = time.getHours() % 12;
@@ -312,12 +312,12 @@ function drawHands(ctx, time, radius) {
 
 /**
  * @description Draws a single hand on the clock with a given angle.
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} angle
- * @param {number} length
- * @param {number} width
- * @param {string} color
- * @returns {void}
+ * @param {CanvasRenderingContext2D} ctx - The 2D canvas drawing context.
+ * @param {number} angle - The rotation angle of the hand in radians.
+ * @param {number} length - The visual length of the hand.
+ * @param {number} width - The stroke width of the hand.
+ * @param {string} color - The stroke color used to draw the hand.
+ * @returns {void} Does not return a value.
  */
 function drawHand(ctx, angle, length, width, color) {
   ctx.beginPath();
@@ -333,7 +333,8 @@ function drawHand(ctx, angle, length, width, color) {
 
 /**
  * @description Toggles between day and night mode for the clock section only.
- * @returns {void}
+ * @param {void} none - This function does not take any input arguments.
+ * @returns {void} Does not return a value.
  */
 function toggleDayNightMode() {
   const clockSection = document.getElementById('clock-section');
@@ -344,7 +345,8 @@ function toggleDayNightMode() {
 
 /**
  * @description Handles the news search action and renders cards after loading.
- * @returns {Promise<void>}
+ * @param {void} none - This function reads the current value from the news input field.
+ * @returns {Promise<void>} Resolves after fetching news data and updating the UI.
  */
 async function handleNewsSearch() {
   const query = newsInput.value.trim();
@@ -369,8 +371,8 @@ async function handleNewsSearch() {
 
 /**
  * @description Fetches news articles from the NewsData.io API.
- * @param {string} query
- * @returns {Promise<Array<{headline:string,leadParagraph:string,url:string}>>}
+ * @param {string} query - The search term used to request news content.
+ * @returns {Promise<Array<{headline:string,leadParagraph:string,url:string}>>} A normalized list of article summaries.
  */
 async function fetchNewsArticles(query) {
   if (!API_KEYS.NEWSDATA || API_KEYS.NEWSDATA === "YOUR NEWSDATA API KEY HERE") {
@@ -400,8 +402,8 @@ async function fetchNewsArticles(query) {
 
 /**
  * @description Renders NewsData article cards inside the news section.
- * @param {Array<{headline:string,leadParagraph:string,url:string}>} articles
- * @returns {void}
+ * @param {Array<{headline:string,leadParagraph:string,url:string}>} articles - The articles to render as cards.
+ * @returns {void} Does not return a value.
  */
 function renderNewsCards(articles) {
   newsGrid.innerHTML = articles.map((article) => `
@@ -415,7 +417,8 @@ function renderNewsCards(articles) {
 
 /**
  * @description Handles the video search and populates thumbnails.
- * @returns {Promise<void>}
+ * @param {void} none - This function reads the current value from the video input field.
+ * @returns {Promise<void>} Resolves after searching videos and updating player/thumbnail UI.
  */
 async function handleVideoSearch() {
   const query = videoInput.value.trim();
@@ -442,8 +445,8 @@ async function handleVideoSearch() {
 
 /**
  * @description Fetches the top YouTube videos for a search query using YouTube Data API v3.
- * @param {string} query - The search topic for YouTube videos
- * @returns {Promise<Array<{id:string,title:string,thumbnail:string}>>} Array of video objects with metadata
+ * @param {string} query - The search topic for YouTube videos.
+ * @returns {Promise<Array<{id:string,title:string,thumbnail:string}>>} A list of videos containing ID, title, and thumbnail URL.
  */
 async function fetchYouTubeVideos(query) {
   if (!API_KEYS.YOUTUBE || API_KEYS.YOUTUBE === "YOUR YOUTUBE API KEY HERE") {
@@ -468,8 +471,8 @@ async function fetchYouTubeVideos(query) {
 
 /**
  * @description Returns an HTML string for a video thumbnail card.
- * @param {{id:string,title:string,thumbnail:string}} video
- * @returns {string}
+ * @param {{id:string,title:string,thumbnail:string}} video - A video object used to build thumbnail markup.
+ * @returns {string} The rendered HTML string for a clickable thumbnail card.
  */
 function renderVideoThumbnail(video) {
   return `
@@ -482,8 +485,8 @@ function renderVideoThumbnail(video) {
 
 /**
  * @description Updates the iframe to play the selected YouTube video.
- * @param {string} videoId
- * @returns {void}
+ * @param {string} videoId - The YouTube video ID to load in the embedded player.
+ * @returns {void} Does not return a value.
  */
 function setVideoFrame(videoId) {
   videoFrame.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
@@ -491,8 +494,8 @@ function setVideoFrame(videoId) {
 
 /**
  * @description Escapes text to prevent HTML injection in injected templates.
- * @param {string} value
- * @returns {string}
+ * @param {string} value - Raw text that may contain special HTML characters.
+ * @returns {string} The escaped HTML-safe text string.
  */
 function escapeHtml(value) {
   return value

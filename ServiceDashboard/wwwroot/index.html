@@ -5,15 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Service Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAG2UHNcR8Nm_gIMu21T7MV3W5Gums18BU&libraries=places"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAPCmoXJpjXaGzE_UlgkP0J9Fg3-P2pxU&libraries=places"></script>
 </head>
 <body>
   <header class="site-header">
     <h1>Service Dashboard</h1>
     <p>Unified API dashboard with map search, news feed, video search, and a real-time canvas clock.</p>
-    <div id="api-status" style="background: #fef3c7; color: #92400e; padding: 0.5rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem;">
-      ⚠️ <strong>API Keys Required:</strong> Add your API keys to <code>config.js</code> for full functionality (Google Maps, NewsData, YouTube).
-    </div>
   </header>
 
   <main class="dashboard-grid">
@@ -24,13 +21,13 @@
         <button id="location-search">Search</button>
       </div>
       <div id="map" class="map-container"></div>
-      <p class="note">Uses Mapbox Geocoding API and Mapbox GL for the interactive map.</p>
+      <p class="note">Uses Google Maps Geocoding API for the interactive map.</p>
     </section>
 
     <section class="card" id="news-section">
       <h2>Real-Time News Stream</h2>
       <div class="form-row">
-        <input id="news-input" type="search" placeholder="Search NYTimes News" />
+        <input id="news-input" type="search" placeholder="Search Real-Time News" />
         <button id="news-search">Search</button>
       </div>
       <div id="news-spinner" class="spinner hidden"></div>
@@ -60,7 +57,8 @@
     </section>
   </main>
 
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.19.0/mapbox-gl.js"></script>
+  <!--- <script src="https://api.mapbox.com/mapbox-gl-js/v2.19.0/mapbox-gl.js"></script> -->
   <script type="module" src="app.js"></script>
+
 </body>
 </html>

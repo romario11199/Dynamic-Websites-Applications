@@ -4,11 +4,11 @@
 
 This repository contains a complete implementation of the Service Dashboard assignment, demonstrating the ability to fetch, handle, and display asynchronous data from three global providers using ES6 Async/Await patterns, along with a real-time HTML5 Canvas analog clock.
 
-## 🎯 Assignment Requirements Met
+## Assignment Requirements Met
 
 ### Part 1: API Integration & Canvas Application (60 Marks)
 
-#### ✅ Requirement 1: Geospatial Intelligence (20 Marks)
+#### Requirement 1: Geospatial Intelligence (20 Marks)
 - **Provider**: Google Maps (Geocoding API)
 - **Features**:
   - Interactive map component using Google Maps JavaScript API
@@ -17,7 +17,7 @@ This repository contains a complete implementation of the Service Dashboard assi
   - Map centers on coordinates and drops custom marker
   - Error handling for invalid locations and missing API keys
 
-#### ✅ Requirement 2: Real-Time News Stream (20 Marks)
+#### Requirement 2: Real-Time News Stream (20 Marks)
 - **Provider**: NewsData.io API
 - **Features**:
   - Searchable news feed with input field
@@ -27,7 +27,7 @@ This repository contains a complete implementation of the Service Dashboard assi
   - Loading spinner animation during data fetching
   - Displays up to 8 articles per search
 
-#### ✅ Requirement 3: On-Demand Media Player (20 Marks)
+#### Requirement 3: On-Demand Media Player (20 Marks)
 - **Provider**: YouTube Data API v3
 - **Features**:
   - Video search utility with input field
@@ -38,7 +38,7 @@ This repository contains a complete implementation of the Service Dashboard assi
 
 ### Part 2: Canvas Rendering (20 Marks)
 
-#### ✅ Real-Time Analog Clock
+#### Real-Time Analog Clock
 - **Animation Engine**: Uses `window.requestAnimationFrame()` (not `setInterval`)
 - **Math Logic**: Trigonometric calculations using `Math.PI` for hand coordinates
 - **UI Interaction**: Toggle button switches between Day/Light mode and Night/Dark mode
@@ -141,11 +141,11 @@ The application includes:
 ## 🎓 Academic Compliance
 
 This implementation fully satisfies the assignment requirements:
-- ✅ Three global API providers integrated
-- ✅ ES6 Async/Await patterns throughout
-- ✅ HTML5 Canvas with requestAnimationFrame
-- ✅ Trigonometric calculations for clock hands
-- ✅ State management without animation interruption
-- ✅ Modular code structure with API key separation
-- ✅ Comprehensive function documentation
-- ✅ GitHub-ready repository structure
+- Three global API providers integrated
+- ES6 Async/Await patterns throughout
+- HTML5 Canvas with requestAnimationFrame
+- Trigonometric calculations for clock hands
+- State management without animation interruption
+- Modular code structure with API key separation
+- Comprehensive function documentation
+- GitHub-ready repository structure
